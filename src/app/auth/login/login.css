@@ -1,0 +1,89 @@
+.container {
+    width: 450px;
+    height: 450px;
+    background-color: transparent;
+    backdrop-filter: blur(20px); /* glass effect */
+    box-shadow: 0 0 10px #062339;
+    border-radius: 10px;
+    display: block;
+    border: 2px solid rgba(6,35,57,0.5);
+    color: white;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group {
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+  width: 50%;
+}
+
+/* input underline style */
+.login-input {
+    font-family: inherit;
+    border: none;
+    border-bottom: 2px solid gray;
+    outline: none;
+    font-size: 1.3rem;
+    color: white;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+/* placeholder hidden effect */
+.login-input::placeholder {
+    color: transparent;
+}
+
+.login-input-label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: gray;
+}
+
+/* focus effect */
+.login-input:focus {
+    padding-bottom: 6px;  
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, #007BFF, #00CFFF); /* thay $primary,$secondary bằng màu cụ thể */
+    border-image-slice: 1;
+}
+
+/* focus label effect */
+.login-input:focus + .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: #007BFF; /* thay $primary */
+    font-weight: 700;
+}
+
+/* reset input shadow */
+.login-input:required,
+.login-input:invalid {
+    box-shadow: none;
+}
+
+.logo {
+    width: 150px;
+    height: 150px;
+    text-align: center;
+}
+
+/* responsive container */
+@media screen and (max-width: 650px) {
+    .container {
+        width: 300px;
+        height: 300px;
+    }
+}

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthRequest } from '../../model/User';
 import { AuthService } from '../../service/auth.service';
 import { Router } from '@angular/router';
@@ -21,29 +21,23 @@ export class Login {
     password: ['', Validators.required],
   });
 
-  loading = signal(false);
-  loginError = signal('');
+  // Không cần signal riêng trong component nữa
+  loading = this.authService.loading;
+  loginError = this.authService.loginError;
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.loading.set(true);
-      this.loginError.set('');
-
       const request: AuthRequest = this.loginForm.value as AuthRequest;
+
+      // Gọi service login, state loading/error đã có trong service
       this.authService.login(request).subscribe({
         next: (res) => {
           console.log('✅ Login success:', res);
-
-          // Lưu token vào localStorage
-          localStorage.setItem('accessToken', res.accessToken);
-          localStorage.setItem('refreshToken', res.refreshToken);
-
+          // Navigate sau khi login thành công
           this.router.navigate(['/dashboard']);
-          this.loading.set(false);
         },
         error: (err) => {
-          this.loading.set(false);
-          this.loginError.set('Sai tên tài khoản hoặc mật khẩu! Xin vui lòng thử lại.');
+          console.log('Login failed', err);
         },
       });
     }

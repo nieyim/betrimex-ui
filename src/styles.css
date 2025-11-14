@@ -4,5 +4,8 @@
 
 @theme {
   --color-thadosoft: #139A9A;
-  --font-display: "Segoe UI"
+  --color-betrimex: #156837;
+  --color-textbetrimex: #156837;
+  --font-display: "Segoe UI";
+  --color-sidebartabhover: "#e3f1ee"
 }

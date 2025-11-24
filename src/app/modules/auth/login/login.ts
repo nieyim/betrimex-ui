@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, inject } from '@angular/core';
-import { AuthRequest } from '../../model/User';
-import { AuthService } from '../../service/auth.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/service/auth.service';
+import { AuthRequest } from '../../../core/model/User';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,6 @@ export class Login {
     password: ['', Validators.required],
   });
 
-  // Không cần signal riêng trong component nữa
   loading = this.authService.loading;
   loginError = this.authService.loginError;
 
@@ -32,7 +31,7 @@ export class Login {
       // Gọi service login, state loading/error đã có trong service
       this.authService.login(request).subscribe({
         next: (res) => {
-          console.log('✅ Login success:', res);
+          console.log('Login success:', res);
           // Navigate sau khi login thành công
           this.router.navigate(['/dashboard']);
         },

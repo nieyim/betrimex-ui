@@ -11,22 +11,21 @@ export class AuthGuard implements CanActivate {
   canActivate(): boolean {
     const token = localStorage.getItem('accessToken');
 
-    // Không có token → không cho truy cập
+    // Deny access if no token found
     if (!token) {
       this.redirectToLogin();
       return false;
     }
 
-    // Token không hợp lệ hoặc hết hạn
+    // Deny access if token is invalid or expired
     if (!this.jwtHelper.isTokenValid(token)) {
       this.redirectToLogin();
       return false;
     }
-
-    // Token OK → cho vào
     return true;
   }
 
+  // Method to handle redirection to login
   private redirectToLogin() {
     localStorage.removeItem('accessToken');
     this.router.navigate(['/']);

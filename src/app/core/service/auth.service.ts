@@ -12,27 +12,28 @@ export class AuthService {
   private accessTokenKey = 'accessToken';
   private refreshTokenKey = 'refreshToken';
 
+  // Signal to save current user info
   currentUsername = signal<string | null>(null);
-  currentUserId = signal<string | null>(null); 
+  currentUserId = signal<string | null>(null);
   loading = signal(false);
   loginError = signal('');
 
-  constructor(
-    private http: HttpClient,
-    private jwtHelper: JwtHelperService
-  ) {
+  // Contructor to initialize service
+  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {
     this.initializeAuth();
   }
 
+  // Initialize authentication state from stored tokens
   private initializeAuth(): void {
     const token = this.getAccessToken();
-    
+
     if (token && this.jwtHelper.isTokenValid(token)) {
+      // Decode token
       const payload = this.jwtHelper.decodeToken(token);
-      
-      // Lấy username từ sub
+
+      // Get username from token
       this.currentUsername.set(payload?.sub || null);
-      
+
       console.log('Session restored. Username:', payload?.sub);
     } else {
       this.logout();
@@ -47,20 +48,20 @@ export class AuthService {
       tap({
         next: (res) => {
           this.setTokens(res.accessToken, res.refreshToken);
-          
+
           // Lấy username từ token
           const payload = this.jwtHelper.decodeToken(res.accessToken);
           this.currentUsername.set(payload?.sub || null);
-          
+
           // Lấy userId từ response (nếu backend trả về)
           this.currentUserId.set(res.id || null);
-          
+
           this.loading.set(false);
-          
+
           console.log('Login success:', {
             username: payload?.sub,
             userId: res.id,
-            tokenExpiry: new Date((payload?.exp || 0) * 1000)
+            tokenExpiry: new Date((payload?.exp || 0) * 1000),
           });
         },
         error: (err) => {
@@ -101,7 +102,7 @@ export class AuthService {
   getCurrentUsername(): string | null {
     const token = this.getAccessToken();
     if (!token) return null;
-    
+
     const payload = this.jwtHelper.decodeToken(token);
     return payload?.sub || null;
   }

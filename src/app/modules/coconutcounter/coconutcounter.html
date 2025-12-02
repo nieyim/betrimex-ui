@@ -1,0 +1,253 @@
+<div class="flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="p-4 sm:p-6 w-full max-w-full bg-white">
+    <h1 class="text-3xl font-bold text-gray-800 border-l-4 border-lime-300 pl-3 mb-4">
+      QUẢN LÝ PHIẾU ĐẾM DỪA
+    </h1>
+
+    <!-- QR Code Input / Scanner Area -->
+    <div
+      class="flex flex-col md:flex-row md:items-end items-start gap-3 p-3 sm:p-4 bg-white rounded-xl shadow-lg w-full"
+    >
+      <div class="flex-1 w-full">
+        <label for="qr-input" class="block text-xl font-medium text-gray-700 mb-2">
+          Nhập hoặc Quét Mã QR
+        </label>
+        <div class="relative">
+          <input
+            id="qr-input"
+            type="text"
+            [value]="qrInput()"
+            (input)="qrInput.set($event.target.value)"
+            placeholder="Nhập mã QR tại đây..."
+            class="w-full placeholder-gray-400 placeholder-opacity-100 pl-4 pr-12 py-2.5 focus:outline-none border border-lime-200 rounded-lg focus:ring-2 focus:ring-lime-200 focus:border-lime-200 transition duration-150 shadow-sm text-sm"
+          />
+          <!-- QR Scanner -->
+          <button
+            class="absolute right-0 top-0 h-full px-3 cursor-pointer text-betrimex bg-lime-300 hover:bg-lime-400 rounded-r-lg transition duration-150 disabled:opacity-50"
+            [disabled]="isScanning()"
+            (click)="toggleScanning()"
+            title="Quét QR Code"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6 shrink-0"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+              />
+            </svg>
+          </button>
+        </div>
+        @if (isScanning()) { }
+      </div>
+      <button
+        class="w-full md:w-auto px-6 py-2.5 bg-lime-300 text-betrimex font-semibold cursor-pointer rounded-lg shadow-md hover:bg-lime-400 transition duration-200"
+        (click)="searchByQr()"
+      >
+        Xác nhận
+      </button>
+    </div>
+  </header>
+
+  <!-- Data Table -->
+  <main class="flex-1 overflow-y-auto p-4 sm:p-6">
+    <div class="bg-white rounded-xl shadow-xl">
+      <!-- Filter Area -->
+      <div class="p-4 border-b border-gray-200">
+        <h3 class="text-xl font-semibold mb-3 text-gray-800">Danh Sách Phiếu Đã Đăng Ký</h3>
+        <div class="flex flex-col sm:flex-row gap-3 items-end">
+          <div class="w-full sm:w-auto">
+            <label for="date-from" class="block text-xs font-medium text-gray-500 mb-1"
+              >Từ Ngày</label
+            >
+            <input
+              id="date-from"
+              type="date"
+              [value]="filterFromDate()"
+              (input)="filterFromDate.set($event.target.value)"
+              class="w-36 border border-gray-300 rounded-lg py-2 px-3 text-sm"
+            />
+          </div>
+          <div class="w-full sm:w-auto">
+            <label for="date-to" class="block text-xs font-medium text-gray-500 mb-1"
+              >Đến Ngày</label
+            >
+            <input
+              id="date-to"
+              type="date"
+              [value]="filterToDate()"
+              (input)="filterToDate.set($event.target.value)"
+              class="w-36 border border-gray-300 rounded-lg py-2 px-3 text-sm"
+            />
+          </div>
+          <button
+            class="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0 px-4 py-2 bg-lime-300 text-betrimex font-medium rounded-lg hover:bg-lime-400 transition duration-150 shrink-0 flex items-center gap-2 justify-center"
+            (click)="applyDateFilter()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+              />
+            </svg>
+
+            Lọc
+          </button>
+          <button
+            class="cursor-pointer w-full sm:w-auto mt-0 px-4 py-2 bg-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-300 transition duration-150 shrink-0"
+            (click)="resetFilter()"
+          >
+            Xóa Lọc
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                STT
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Mã QR
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Thẻ Xe
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Số Lô
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Biển Số Xe
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Nhà Cung Cấp
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Tài Xế 1
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Ngày Đăng Ký
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (item of pagedData(); track item.stt) {
+            <tr class="hover:bg-lime-50 transition duration-100">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {{ item.stt }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
+                {{ item.qrCode }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ item.vehicleCard }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ item.lotNumber }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ item.licensePlate }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.supplier }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.driver1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ item.registrationDate }}
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                Không tìm thấy phiếu đếm nào phù hợp.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        class="p-4 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200"
+      >
+        <span class="text-sm text-gray-700 mb-2 sm:mb-0">
+          Hiển thị {{ startIndex() + 1 }} đến {{ endIndex() }} trong tổng số {{ totalItems() }} mục
+        </span>
+        <div class="flex items-center space-x-2">
+          <button
+            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
+            [ngClass]="{
+              'bg-lime-300 text-betrimex': currentPage() > 1,
+              'bg-gray-200 text-gray-500 cursor-not-allowed': currentPage() === 1
+            }"
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            Trước
+          </button>
+          @for (page of pages(); track page) {
+          <button
+            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
+            [ngClass]="{
+              'bg-lime-300 text-betrimex shadow-md': page === currentPage(),
+              'bg-gray-100 text-gray-700 hover:bg-gray-200': page !== currentPage()
+            }"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+          }
+          <button
+            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
+            [ngClass]="{
+              'bg-lime-300 text-betrimex': currentPage() < totalPages(),
+              'bg-gray-200 text-gray-500 cursor-not-allowed': currentPage() === totalPages()
+            }"
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            Sau
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

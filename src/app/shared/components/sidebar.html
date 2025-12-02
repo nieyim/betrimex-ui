@@ -1,5 +1,5 @@
 <div
-  class="h-screen bg-gray-100 flex flex-col ease-in-out duration-200"
+  class="h-full bg-gray-100 flex flex-col ease-in-out duration-200"
   [ngClass]="{
     'w-64': !isCollapsed(),
     'w-16': isCollapsed()
@@ -64,7 +64,7 @@
       </div>
     </a>
 
-    <a [routerLink]="'/count'" class="block px-2">
+    <a [routerLink]="'/coconutcounter'" class="block px-2">
       <div
         class="flex items-center p-2 rounded-lg text-gray-600 hover:bg-lime-300 hover:text-betrimex"
         routerLinkActive="bg-lime-300 text-betrimex"

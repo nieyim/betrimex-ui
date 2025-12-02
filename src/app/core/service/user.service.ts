@@ -11,11 +11,12 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // Lấy danh sách tất cả người dùng
+  // Get all users
   getAllUsers(): Observable<UserResponse[]> {
     return this.http.get<UserResponse[]>(this.baseUrl);
   }
 
+  // Get user by ID
   getUserById(id: string): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.baseUrl}/${id}`);
   }

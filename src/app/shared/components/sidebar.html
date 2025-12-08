@@ -27,17 +27,14 @@
     </button>
 
     <div class="flex justify-center items-end h-full pb-2">
-      <img
-        *ngIf="!isCollapsed()"
-        src="assets/images/betrimex.png"
-        alt=""
-        class="max-h-full object-contain fade-in"
-      />
+      @if (!isCollapsed()) {
+      <img src="assets/images/betrimex.png" alt="" class="max-h-full object-contain fade-in" />
+      }
     </div>
   </div>
 
   <nav class="flex-1 overflow-y-auto space-y-2">
-    <a [routerLink]="'/dashboard'" class="block px-2">
+    <a [routerLink]="'/dashboard'" class="block px-3">
       <div
         class="flex items-center p-2 rounded-lg text-gray-600 hover:bg-lime-300 hover:text-betrimex"
         routerLinkActive="bg-lime-300 text-betrimex"
@@ -64,7 +61,7 @@
       </div>
     </a>
 
-    <a [routerLink]="'/coconutcounter'" class="block px-2">
+    <a [routerLink]="'/coconutcounter'" class="block px-3">
       <div
         class="flex items-center p-2 rounded-lg text-gray-600 hover:bg-lime-300 hover:text-betrimex"
         routerLinkActive="bg-lime-300 text-betrimex"
@@ -94,6 +91,36 @@
         </svg>
 
         <span class="font-semibold whitespace-nowrap" *ngIf="!isCollapsed()">Đăng ký đếm dừa</span>
+      </div>
+    </a>
+
+    <a [routerLink]="'/coconutai'" class="block px-3">
+      <div
+        class="flex items-center p-2 rounded-lg text-gray-600 hover:bg-lime-300 hover:text-betrimex"
+        routerLinkActive="bg-lime-300 text-betrimex"
+        [ngClass]="{
+          'justify-center': isCollapsed(),
+          'gap-2': !isCollapsed()
+        }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z"
+          />
+        </svg>
+
+        @if (!isCollapsed()) {
+        <span class="font-semibold whitespace-nowrap">Mô phỏng máy đếm AI</span>
+        }
       </div>
     </a>
 
@@ -132,10 +159,11 @@
   </nav>
 
   <div class="p-4 space-y-1" [ngClass]="{ 'flex flex-col items-center p-2': isCollapsed() }">
-    <div class="text-gray-700 font-semibold px-2" *ngIf="!isCollapsed()">
+    @if (!isCollapsed()) {
+    <div class="text-gray-700 font-semibold px-2">
       Xin chào, <span class="text-betrimex">{{ userName() }}</span>
     </div>
-
+    }
     <button
       class="w-full flex items-center cursor-pointer rounded-lg bg-transparent text-gray-600 hover:text-red-600 font-semibold transition"
       (click)="onLogout()"
@@ -160,7 +188,9 @@
         />
       </svg>
 
-      <span class="whitespace-nowrap" *ngIf="!isCollapsed()">Đăng xuất</span>
+      @if(!isCollapsed()) {
+      <span class="whitespace-nowrap">Đăng xuất</span>
+      }
     </button>
   </div>
 </div>

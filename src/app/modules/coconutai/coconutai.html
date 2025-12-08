@@ -1,0 +1,421 @@
+<div class="h-full min-h-screen flex flex-col bg-white">
+  <!-- HEADER SECTION: QR Code Input and Submission -->
+  <header class="p-4 lg:pl-12 shrink-0">
+    <h1
+      class="text-2xl md:text-3xl font-bold text-gray-800 border-l-4 border-lime-300 pl-3 mb-4 truncate"
+    >
+      MÔ PHỎNG MÁY ĐẾM AI
+    </h1>
+
+    <!-- QR Code Input Section -->
+    <div
+      class="flex flex-col md:flex-row md:items-end items-start gap-3 p-3 sm:p-4 bg-white rounded-xl shadow-lg w-full"
+    >
+      <div class="flex-1 w-full">
+        <label for="qr-input" class="block text-lg md:text-xl font-medium text-gray-700 mb-2">
+          Mô phỏng QR gửi từ trang Đăng ký đếm dừa
+        </label>
+        <div class="relative">
+          <!-- QR Input Field with Angular bindings -->
+          <input
+            #qrInputRef
+            id="qr-input"
+            type="text"
+            [value]="qrInput()"
+            (input)="qrInput.set($event.target.value)"
+            (keydown)="onKeyDown($event)"
+            [placeholder]="isScanning() ? 'Đang chờ quét mã...' : 'Nhập hoặc quét mã QR tại đây...'"
+            class="w-full placeholder-gray-400 placeholder-opacity-100 pl-4 pr-12 py-2.5 focus:outline-none border border-lime-200 rounded-lg focus:ring-2 focus:ring-lime-200 focus:border-lime-200 transition duration-150 shadow-sm text-sm"
+          />
+          <!-- QR Scan Button với SVG Sprite -->
+          <button
+            class="absolute right-0 top-0 h-full px-3 cursor-pointer text-betrimex bg-lime-300 hover:bg-lime-400 rounded-r-lg transition duration-150 disabled:opacity-50"
+            [disabled]="isScanning()"
+            (click)="toggleScanning()"
+            title="Quét QR Code"
+          >
+            <svg class="size-6 shrink-0">
+              <use href="assets/icons/sprite.svg#icon-qrcode"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <!-- Submit Button -->
+      <button
+        class="w-full md:w-auto px-6 py-2.5 bg-lime-300 text-betrimex font-semibold cursor-pointer rounded-lg shadow-md hover:bg-lime-400 transition duration-200 whitespace-nowrap"
+        (click)="handleSubmitQrCode(qrInput())"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+        <span>Đang xử lý...</span>
+        } @else {
+        <span>Xác nhận</span>
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 flex flex-col p-2 md:p-4 lg:pl-12 overflow-hidden">
+    <div
+      class="bg-white rounded-xl shadow-xl flex-1 flex flex-col overflow-hidden w-full max-w-full"
+    >
+      <div class="p-4 md:p-6 flex-1 flex flex-col overflow-hidden">
+        <!-- Title Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between mb-4 md:mb-8 gap-4">
+          <div class="flex items-center space-x-4">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">Camera Vision AI</h1>
+          </div>
+        </div>
+
+        <!-- Main Layout: Sidebar + Camera Feed -->
+        <div
+          class="flex flex-col lg:flex-row w-full bg-gray-50 text-gray-600 font-sans border border-gray-200 rounded-lg overflow-hidden selection:bg-lime-100 selection:text-lime-900 lg:h-full flex-1"
+        >
+          <!-- LEFT SIDEBAR: Information Panel (25% width on large screens) -->
+          <div
+            class="w-full lg:w-[25%] lg:min-w-[320px] xl:min-w-[350px] flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200 bg-white shadow-sm z-10 shrink-0 h-auto lg:h-full overflow-y-auto"
+          >
+            <!-- Factory Header -->
+            <div class="border-b border-gray-200 relative flex flex-col group">
+              <div
+                class="bg-gray-50 px-4 py-2 flex justify-between items-center border-b border-gray-200"
+              >
+                <span class="text-sm font-bold text-betrimex flex items-center gap-2 truncate">
+                  <span class="truncate">NHÀ MÁY BETRIMEX</span>
+                </span>
+              </div>
+
+              <!-- Counting Information Card -->
+              <div class="p-4 md:p-5 bg-gray-50">
+                <div
+                  class="bg-linear-to-br gap-4 from-lime-400 to-yellow-300 rounded-lg border border-lime-100 p-4 md:p-6 flex flex-col items-center justify-center relative shadow-sm min-h-[160px]"
+                >
+                  <div class="flex flex-col">
+                    <span class="text-sm text-gray-800 uppercase z-10 font-semibold text-center"
+                      >Số Lô</span
+                    >
+                    <div
+                      class="text-xl md:text-2xl lg:text-3xl font-bold text-betrimex font-mono tracking-tighter z-10"
+                    >
+                      PGN2508040004
+                    </div>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-sm text-gray-800 uppercase z-10 font-semibold text-center"
+                      >Biển số</span
+                    >
+                    <div
+                      class="text-xl md:text-2xl lg:text-3xl font-bold text-betrimex font-mono tracking-tighter z-10"
+                    >
+                      71C 12802
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- System Status Information -->
+            <div class="flex flex-col md:p-5 p-4 gap-4 bg-gray-50/50 flex-1 overflow-x-hidden">
+              <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span class="text-xs text-gray-400 uppercase font-bold">Thông Tin Hệ Thống</span>
+                </div>
+                <div class="grid grid-cols-2 gap-y-4 gap-x-4 text-sm">
+                  <!-- Camera Status with animated pulse indicator -->
+                  <div class="text-gray-500 font-medium self-center">Camera</div>
+                  <div class="flex items-center justify-end gap-2 text-gray-900 font-semibold">
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span>Hoạt động</span>
+                  </div>
+
+                  <!-- PLC Status -->
+                  <div class="text-gray-500 font-medium self-center">PLC</div>
+                  <div class="flex items-center justify-end gap-2 text-gray-900 font-semibold">
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span>Hoạt động</span>
+                  </div>
+
+                  <!-- Conveyor Belt Status -->
+                  <div class="text-gray-500 font-medium self-center">Băng tải</div>
+                  <div class="flex items-center justify-end gap-2 text-gray-900 font-semibold">
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span>Hoạt động</span>
+                  </div>
+
+                  <!-- Overall Status -->
+                  <div class="text-gray-500 font-medium self-center">Trạng thái</div>
+                  <div class="flex items-center justify-end gap-2 text-gray-900 font-semibold">
+                    @if (status() === 'counting') {
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-green-600">Đang chạy</span>
+                    } @else if (status() === 'paused') {
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    <span class="text-yellow-600">Tạm dừng</span>
+                    } @else {
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    <span class="text-red-600">Đã dừng</span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <!-- Button -->
+              <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span class="text-xs text-gray-400 uppercase font-bold">Nút điều khiển</span>
+                </div>
+                <!-- NEW CONTROL BUTTONS START HERE -->
+                <div class="flex items-center justify-center gap-3 mb-1">
+                  <!-- Start Button -->
+                  @if (status() === 'idle' || status() === 'paused' || status() === 'stopped') {
+                  <button
+                    (click)="startCounting()"
+                    class="group cursor-pointer flex items-center p-3 justify-center rounded-full bg-lime-400 hover:bg-lime-500 transition-all duration-200 active:scale-95 text-white font-bold"
+                    title="Start"
+                  >
+                    Bắt đầu
+
+                    <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </button>
+                  }
+
+                  <!-- Pause Button -->
+                  @if (status() === 'counting') {
+                  <button
+                    (click)="pauseCounting()"
+                    class="group cursor-pointer flex items-center justify-center p-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-200 active:scale-95 text-white font-bold"
+                    title="Tạm dừng"
+                  >
+                    Tạm dừng
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  </button>
+                  }
+
+                  <!-- Stop Button -->
+                  <button
+                    (click)="stopCounting()"
+                    [disabled]="status() === 'idle'"
+                    class="group cursor-pointer flex items-center justify-center p-3 rounded-full bg-red-500 hover:bg-red-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold transition-all duration-200 active:scale-95"
+                    title="Kết thúc/Reset"
+                  >
+                    Dừng
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 6h12v12H6z" />
+                    </svg>
+                  </button>
+                </div>
+                <!-- NEW CONTROL BUTTONS END HERE -->
+              </div>
+
+              <!-- COUNT DISPLAY: Large prominent counter showing 675 -->
+              <div
+                class="bg-linear-to-br from-lime-50 to-white rounded-lg border border-lime-100 p-4 md:p-6 flex flex-col items-center justify-center relative shadow-sm min-h-[160px]"
+              >
+                <div
+                  class="absolute -top-6 -right-6 w-24 h-24 bg-lime-100/50 rounded-full blur-xl"
+                ></div>
+                <span
+                  class="text-sm text-betrimex uppercase tracking-[0.2em] mb-2 z-10 font-semibold text-center"
+                  >Số Lượng Đếm</span
+                >
+                <div
+                  class="text-6xl md:text-7xl lg:text-8xl font-bold text-lime-400 font-mono tracking-tighter z-10"
+                >
+                  {{ count() }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL: Camera Feed Area (75% width) -->
+          <div class="flex-1 flex flex-col bg-gray-100 min-w-0 h-[600px] lg:h-auto">
+            <!-- Tab Bar for multiple conveyor belts -->
+            <div
+              class="h-12 bg-gray-200 border-b border-gray-300 flex items-end px-2 pt-2 gap-1 select-none shadow-inner shrink-0 overflow-x-auto"
+            >
+              <div
+                class="h-full px-3 flex items-center gap-1 bg-white rounded-t-lg text-betrimex border-t border-x border-gray-300 border-b-0 cursor-default relative shadow-[0_-2px_5px_rgba(0,0,0,0.02)] z-10 whitespace-nowrap"
+              >
+                <span class="text-sm font-bold">Băng tải 1</span>
+                <button
+                  class="hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full p-0.5 transition"
+                >
+                  <svg width="14" height="14">
+                    <use href="assets/icons/sprite.svg#icon-close"></use>
+                  </svg>
+                </button>
+              </div>
+              <button
+                class="h-8 w-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-300 rounded-md transition shrink-0"
+              >
+                <svg width="20" height="20">
+                  <use href="assets/icons/sprite.svg#icon-plus"></use>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Toolbar: View mode and display options -->
+            <div
+              class="min-h-14 py-2 lg:py-0 border-b border-gray-200 bg-white flex flex-wrap items-center justify-between px-4 md:px-6 shadow-sm z-10 gap-3"
+            >
+              <!-- Left side: View layout buttons -->
+              <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center bg-gray-100 border border-gray-200 rounded-md p-1">
+                  <!-- Single view button (active) -->
+                  <button
+                    class="p-1.5 rounded bg-white text-betrimex shadow-sm border border-gray-200 cursor-pointer"
+                  >
+                    <svg width="16" height="16">
+                      <use href="assets/icons/sprite.svg#icon-grid-1x1"></use>
+                    </svg>
+                  </button>
+                  <!-- 2x2 Grid button (disabled) -->
+                  <button
+                    class="p-1.5 disabled:cursor-not-allowed rounded text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition cursor-pointer"
+                    disabled
+                  >
+                    <svg width="16" height="16">
+                      <use href="assets/icons/sprite.svg#icon-grid-2x2"></use>
+                    </svg>
+                  </button>
+                  <!-- 3 panel button (disabled) -->
+                  <button
+                    class="p-1.5 disabled:cursor-not-allowed rounded text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition cursor-pointer"
+                    disabled
+                  >
+                    <svg width="16" height="16">
+                      <use href="assets/icons/sprite.svg#icon-grid-3panel"></use>
+                    </svg>
+                  </button>
+                </div>
+                <span class="hidden sm:block h-6 w-px bg-gray-200"></span>
+                <div class="text-sm text-gray-500 whitespace-nowrap">
+                  Hiển thị: <span class="text-gray-900 font-medium">1x1</span>
+                </div>
+              </div>
+
+              <!-- Right side: Mode selector -->
+              <div class="flex items-center gap-3 ml-auto sm:ml-0">
+                <div class="text-sm text-gray-500 whitespace-nowrap">Chế độ:</div>
+                <select class="border p-1 rounded text-sm bg-white">
+                  <option value="live">Tự động</option>
+                  <option value="manual">Thủ công</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Camera Feed Container -->
+            <div class="flex flex-col h-full w-full bg-gray-50 overflow-y-auto p-2 md:p-4">
+              <!-- Header with system name and signal status -->
+              <div
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 px-2 gap-2"
+              >
+                <h1 class="text-gray-800 font-bold text-lg md:text-xl tracking-wider truncate">
+                  HỆ THỐNG ĐẾM DỪA
+                </h1>
+                <div class="text-green-600 font-medium text-sm flex items-center gap-2">
+                  <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  Tín hiệu ổn định
+                </div>
+              </div>
+
+              <!-- LIVE CAMERA FEED DISPLAY -->
+              <div
+                class="flex-1 relative bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-xl group min-h-[300px]"
+              >
+                <!-- Static camera image (would be replaced with live feed) -->
+                <img
+                  src="assets/images/cam_demo.png"
+                  class="w-full h-full object-cover transition duration-700 hover:scale-105 absolute inset-0"
+                  alt="Camera Feed"
+                />
+
+                <!-- Top overlay: Live indicator and control buttons -->
+                <div
+                  class="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-start z-10"
+                >
+                  <!-- LIVE indicator badge -->
+                  <div
+                    class="bg-white opacity-100 backdrop-blur-md px-3 py-1.5 md:px-2 md:py-2 rounded-lg flex items-center gap-1 border border-red-600 shadow-md"
+                  >
+                    <span
+                      class="w-2 h-2 animate-pulse rounded-full bg-red-600 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+                    ></span>
+                    <div class="flex flex-col">
+                      <span class="text-sm text-red-600 uppercase font-semibold">Live</span>
+                    </div>
+                  </div>
+
+                  <!-- Control buttons (fullscreen and settings) - appear on hover -->
+                  <div
+                    class="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform lg:translate-y-2.5 lg:group-hover:translate-y-0"
+                  >
+                    <button
+                      class="p-2 md:p-2.5 bg-white hover:bg-blue-50 text-gray-600 hover:text-lime-400 border border-gray-200 rounded-lg transition-all shadow-md cursor-pointer"
+                    >
+                      <svg width="15" height="15">
+                        <use href="assets/icons/sprite.svg#icon-fullscreen"></use>
+                      </svg>
+                    </button>
+                    <button
+                      class="p-2 md:p-2.5 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg transition-all shadow-md cursor-pointer"
+                    >
+                      <svg width="15" height="15">
+                        <use href="assets/icons/sprite.svg#icon-settings"></use>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Bottom overlay: Timer display -->
+                <div
+                  class="absolute bottom-0 left-0 w-full h-24 md:h-32 bg-linear-to-t from-gray-900/50 to-transparent p-4 md:p-6 flex flex-col justify-end"
+                >
+                  <div class="flex justify-between items-end">
+                    <div class="text-right ml-auto">
+                      <div
+                        class="text-white/80 text-[0.7rem] font-bold uppercase tracking-widest mb-1 drop-shadow-md"
+                      >
+                        Thời gian đếm
+                      </div>
+                      <div
+                        class="text-gray-800 font-mono text-lg bg-white/90 px-2 py-0.5 md:px-3 md:py-1 rounded shadow-lg border border-white/50"
+                      >
+                        {{ formattedTime() }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -10,3 +10,5 @@
   --color-sidebartabhover: "#e3f1ee";
   --shadow-custom:  0px 7px 29px 0px rgba(100, 100, 111, 0.2);
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: white; }

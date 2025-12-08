@@ -3,7 +3,7 @@ import { Sidebar } from '../../shared/components/sidebar';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Sidebar],
+  imports: [],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

@@ -1,6 +1,6 @@
-<div class="flex flex-col min-h-screen">
+<div class="h-full flex flex-col  bg-white">
   <!-- Header -->
-  <header class="p-4 sm:p-6 w-full max-w-full bg-white">
+  <header class="p-4 lg:pl-12">
     <h1 class="text-3xl font-bold text-gray-800 border-l-4 border-lime-300 pl-3 mb-4">
       QUẢN LÝ PHIẾU ĐẾM DỪA
     </h1>
@@ -11,15 +11,17 @@
     >
       <div class="flex-1 w-full">
         <label for="qr-input" class="block text-xl font-medium text-gray-700 mb-2">
-          Nhập hoặc Quét Mã QR
+          Đăng ký Phiếu Đếm Dừa
         </label>
         <div class="relative">
           <input
+            #qrInputRef
             id="qr-input"
             type="text"
             [value]="qrInput()"
             (input)="qrInput.set($event.target.value)"
-            placeholder="Nhập mã QR tại đây..."
+            (keydown)="onKeyDown($event)"
+            [placeholder]="isScanning() ? 'Đang chờ quét mã...' : 'Nhập hoặc quét mã QR tại đây...'"
             class="w-full placeholder-gray-400 placeholder-opacity-100 pl-4 pr-12 py-2.5 focus:outline-none border border-lime-200 rounded-lg focus:ring-2 focus:ring-lime-200 focus:border-lime-200 transition duration-150 shadow-sm text-sm"
           />
           <!-- QR Scanner -->
@@ -50,20 +52,24 @@
             </svg>
           </button>
         </div>
-        @if (isScanning()) { }
       </div>
       <button
         class="w-full md:w-auto px-6 py-2.5 bg-lime-300 text-betrimex font-semibold cursor-pointer rounded-lg shadow-md hover:bg-lime-400 transition duration-200"
-        (click)="searchByQr()"
+        (click)="handleSubmitQrCode(qrInput())"
+        [disabled]="isSubmitting()"
       >
-        Xác nhận
+        @if (isSubmitting()) {
+        <span>Đang xử lý...</span>
+        } @else {
+        <span>Xác nhận</span>
+        }
       </button>
     </div>
   </header>
 
   <!-- Data Table -->
-  <main class="flex-1 overflow-y-auto p-4 sm:p-6">
-    <div class="bg-white rounded-xl shadow-xl">
+  <main class="flex-1 p-4 lg:pl-12">
+    <div class="bg-white rounded-xl shadow-xl h-full overflow-hidden flex flex-col">
       <!-- Filter Area -->
       <div class="p-4 border-b border-gray-200">
         <h3 class="text-xl font-semibold mb-3 text-gray-800">Danh Sách Phiếu Đã Đăng Ký</h3>
@@ -73,10 +79,10 @@
               >Từ Ngày</label
             >
             <input
+              #dateFromRef
               id="date-from"
               type="date"
-              [value]="filterFromDate()"
-              (input)="filterFromDate.set($event.target.value)"
+              [value]="fromDate"
               class="w-36 border border-gray-300 rounded-lg py-2 px-3 text-sm"
             />
           </div>
@@ -85,16 +91,16 @@
               >Đến Ngày</label
             >
             <input
+              #dateToRef
               id="date-to"
               type="date"
-              [value]="filterToDate()"
-              (input)="filterToDate.set($event.target.value)"
+              [value]="toDate"
               class="w-36 border border-gray-300 rounded-lg py-2 px-3 text-sm"
             />
           </div>
           <button
             class="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0 px-4 py-2 bg-lime-300 text-betrimex font-medium rounded-lg hover:bg-lime-400 transition duration-150 shrink-0 flex items-center gap-2 justify-center"
-            (click)="applyDateFilter()"
+            (click)="applyFilter()"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +121,7 @@
           </button>
           <button
             class="cursor-pointer w-full sm:w-auto mt-0 px-4 py-2 bg-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-300 transition duration-150 shrink-0"
-            (click)="resetFilter()"
+            (click)="clearFilter()"
           >
             Xóa Lọc
           </button>
@@ -123,8 +129,8 @@
       </div>
 
       <!-- Table -->
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
+      <div class="flex-1 overflow-y-auto overflow-x-auto">
+        <table class="w-full table-auto divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
               <th
@@ -140,57 +146,79 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Thẻ Xe
+                Thẻ xe
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Số Lô
+                Số lô
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Biển Số Xe
+                Biển số xe
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Nhà Cung Cấp
+                Nhà cung cấp
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Tài Xế 1
+                Tài xế 1
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Ngày Đăng Ký
+                CCCD 1
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Thời gian dự kiến đến
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Ngày tạo
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            @for (item of pagedData(); track item.stt) {
+          <tbody class="bg-white divide-y divide-gray-200 ">
+            @for (qr of qrData; track qr.id; let i = $index) {
             <tr class="hover:bg-lime-50 transition duration-100">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {{ item.stt }}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-900">
+                {{ i + 1 + pageIndex * pageSize }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
-                {{ item.qrCode }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {{ item.vehicleCard }}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600  font-mono">
+                {{ qr.qrScanner }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {{ item.lotNumber }}
+                {{ qr.vehicleCard }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {{ item.licensePlate }}
+                {{ qr.lotNumber }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.supplier }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.driver1 }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {{ item.registrationDate }}
+                {{ qr.licensePlate }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ qr.supplierNameBTM }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ qr.driver1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ qr.citizenId1 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{
+                  qr.estimatedArrivalTime
+                    ? (qr.estimatedArrivalTime | date : 'dd/MM/yyyy HH:mm:ss')
+                    : ''
+                }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ qr.createdAt | date : 'dd/MM/yyyy HH:mm:ss' }}
               </td>
             </tr>
             } @empty {
@@ -205,47 +233,132 @@
       </div>
 
       <!-- Pagination -->
-      <div
-        class="p-4 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200"
-      >
-        <span class="text-sm text-gray-700 mb-2 sm:mb-0">
-          Hiển thị {{ startIndex() + 1 }} đến {{ endIndex() }} trong tổng số {{ totalItems() }} mục
-        </span>
-        <div class="flex items-center space-x-2">
-          <button
-            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
-            [ngClass]="{
-              'bg-lime-300 text-betrimex': currentPage() > 1,
-              'bg-gray-200 text-gray-500 cursor-not-allowed': currentPage() === 1
-            }"
-            [disabled]="currentPage() === 1"
-            (click)="goToPage(currentPage() - 1)"
-          >
-            Trước
-          </button>
-          @for (page of pages(); track page) {
-          <button
-            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
-            [ngClass]="{
-              'bg-lime-300 text-betrimex shadow-md': page === currentPage(),
-              'bg-gray-100 text-gray-700 hover:bg-gray-200': page !== currentPage()
-            }"
-            (click)="goToPage(page)"
-          >
-            {{ page }}
-          </button>
-          }
-          <button
-            class="px-3 py-1 text-sm font-medium rounded-lg transition duration-150"
-            [ngClass]="{
-              'bg-lime-300 text-betrimex': currentPage() < totalPages(),
-              'bg-gray-200 text-gray-500 cursor-not-allowed': currentPage() === totalPages()
-            }"
-            [disabled]="currentPage() === totalPages()"
-            (click)="goToPage(currentPage() + 1)"
-          >
-            Sau
-          </button>
+      <div class="p-4 border-t border-gray-200 bg-white">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="text-sm text-gray-600">
+            Hiển thị <span class="font-semibold text-gray-900">{{ startItem }}</span> -
+            <span class="font-semibold text-gray-900">{{ endItem }}</span> của
+            <span class="font-semibold text-gray-900">{{ totalItems }}</span> kết quả
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 mr-4">
+              <select
+                class="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white"
+                [value]="pageSize"
+                (change)="onPageSizeChange($event)"
+              >
+                @for (size of pageSizeOptions; track size) {
+                <option [value]="size" [selected]="size === pageSize">{{ size }}</option>
+                }
+              </select>
+            </div>
+
+            <button
+              class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+              [disabled]="pageIndex === 0"
+              (click)="goToFirstPage()"
+              title="Trang đầu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5"
+                />
+              </svg>
+            </button>
+
+            <button
+              class="size-8 rounded-lg border cursor-pointer border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+              [disabled]="pageIndex === 0"
+              (click)="goToPreviousPage()"
+              title="Trang trước"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+
+            @for (page of getPageNumbers(); track page) {
+            <button
+              class="size-8 p-1 rounded-lg border transition text-xs cursor-pointer font-semibold flex items-center justify-center"
+              [class.bg-lime-300]="page === pageIndex"
+              [class.text-betrimex]="page === pageIndex"
+              [class.border-lime-300]="page === pageIndex"
+              [class.shadow-sm]="page === pageIndex"
+              [class.border-gray-300]="page !== pageIndex"
+              [class.text-gray-700]="page !== pageIndex"
+              [class.hover:bg-lime-50]="page !== pageIndex"
+              [class.hover:border-lime-300]="page !== pageIndex"
+              (click)="onPageChange(page)"
+            >
+              {{ page + 1 }}
+            </button>
+            }
+
+            <button
+              class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+              [disabled]="pageIndex === totalPages - 1"
+              (click)="goToNextPage()"
+              title="Trang sau"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+
+            <button
+              class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+              [disabled]="pageIndex === totalPages - 1"
+              (click)="goToLastPage()"
+              title="Trang cuối"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

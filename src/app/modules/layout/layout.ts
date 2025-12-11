@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Sidebar } from '../../shared/components/sidebar';
+import { Sidebar } from '../../shared/components/sidebar/sidebar';
 import { RouterModule } from "@angular/router";
 
 @Component({

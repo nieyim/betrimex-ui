@@ -1,0 +1,66 @@
+<div
+  class="w-full max-w-4xl mx-auto p-6 rounded-2xl"
+>
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
+    <div>
+      <h3 class="text-2xl font-bold text-gray-900 text-center md:text-left">Thống kê số lượng dừa</h3>
+      <p class="text-sm text-gray-500 mt-1">
+        Theo dõi số lượng dừa đã đếm theo từng mốc thời gian.
+      </p>
+    </div>
+
+    <!-- Mode Switch -->
+    <div class="flex space-x-2 bg-gray-100 p-1 rounded-full shadow-inner">
+
+      <!-- Week -->
+      <button
+        (click)="loadChartData('week')"
+        [class.active]="currentMode === 'week'"
+        class="px-4 py-2 text-sm rounded-full font-medium transition-all duration-200"
+        [ngClass]="{
+          'bg-lime-400 text-gray-900 shadow-md shadow-lime-300/50 hover:bg-lime-500':
+            currentMode === 'week',
+          'text-gray-600 hover:text-gray-900 hover:bg-white': currentMode !== 'week'
+        }"
+      >
+        Tuần
+      </button>
+
+      <!-- Month -->
+      <button
+        (click)="loadChartData('month')"
+        [class.active]="currentMode === 'month'"
+        class="px-4 py-2 text-sm rounded-full font-medium transition-all duration-200"
+        [ngClass]="{
+          'bg-lime-400 text-gray-900 shadow-md shadow-lime-300/50 hover:bg-lime-500':
+            currentMode === 'month',
+          'text-gray-600 hover:text-gray-900 hover:bg-white': currentMode !== 'month'
+        }"
+      >
+        Tháng
+      </button>
+
+      <!-- Year -->
+      <button
+        (click)="loadChartData('year')"
+        [class.active]="currentMode === 'year'"
+        class="px-4 py-2 text-sm rounded-full font-medium transition-all duration-200"
+        [ngClass]="{
+          'bg-lime-400 text-gray-900 shadow-md shadow-lime-300/50 hover:bg-lime-500':
+            currentMode === 'year',
+          'text-gray-600 hover:text-gray-900 hover:bg-white': currentMode !== 'year'
+        }"
+      >
+        Năm
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="h-100 rounded-xl bg-white  p-4">
+    <canvas id="barChart"></canvas>
+  </div>
+</div>

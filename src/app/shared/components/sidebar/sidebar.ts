@@ -2,9 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { signal } from '@angular/core';
-import { AuthService } from '../../core/service/auth.service';
-import { UserService } from '../../core/service/user.service';
-import { UserResponse } from '../../core/model/User';
+import { AuthService } from '../../../core/service/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',

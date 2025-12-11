@@ -8,10 +8,11 @@ import {
 } from '../../shared/utils/date.util';
 import { PageEvent } from '@angular/material/paginator';
 import { QrData, QrDataResponse, QrDataSearchParams } from '../../core/model/QrData';
+import { Header } from '../../shared/components/header/header';
 
 @Component({
   selector: 'app-coconutcounter',
-  imports: [CommonModule],
+  imports: [CommonModule, Header],
   templateUrl: './coconutcounter.html',
   styleUrl: './coconutcounter.css',
 })

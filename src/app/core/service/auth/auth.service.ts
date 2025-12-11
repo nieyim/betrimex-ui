@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthRequest, AuthResponse } from '../model/User';
+import { AuthRequest, AuthResponse } from '../../model/User';
 import { JwtHelperService } from './jwthelper.service';
 
 @Injectable({

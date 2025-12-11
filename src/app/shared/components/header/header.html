@@ -1,0 +1,42 @@
+<!-- Top Section: App Title & Global Status (Replaces Navbar) -->
+<div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+  <div class="flex items-center gap-3">
+    <!-- Animated Coconut Logo -->
+    <div
+      class="relative p-2 w-12 h-12 flex items-center justify-center bg-thadosoft rounded-full shadow-lg shadow-cyan-100 hover-float"
+    >
+      <img src="/assets/images/logo_white.png" />
+    </div>
+    <div>
+      <h1 class="font-black text-3xl text-slate-800 tracking-tight">
+        Thado<span class="text-thadosoft">soft</span>
+      </h1>
+      <p class="text-slate-400 text-sm font-medium">Hệ thống Quản lý Đếm Dừa Thông Minh</p>
+    </div>
+  </div>
+
+  <div
+    class="flex items-center gap-6 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100"
+  >
+    <!-- Machine Status -->
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <div class="text-xs font-bold text-tha uppercase tracking-wider">Trạng thái bản quyền</div>
+        <div class="text-sm font-bold text-lime-600">Đã kích hoạt</div>
+      </div>
+      <span class="relative flex h-4 w-4">
+        <span class="absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
+        <span
+          class="relative inline-flex rounded-full h-4 w-4 bg-lime-500 border-2 border-white"
+        ></span>
+      </span>
+    </div>
+
+    <div class="h-8 w-px bg-slate-100 mx-2"></div>
+
+    <!-- Clock (Static Mock) -->
+    <div class="text-slate-500 font-mono text-sm">
+      {{ now | date : 'HH:mm:ss' }}
+    </div>
+  </div>
+</div>

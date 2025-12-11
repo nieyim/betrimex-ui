@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
-import { QrDataResponse, QrDataSearchParams } from '../../model/QrData';
+import { QrData, QrDataResponse, QrDataSearchParams } from '../../model/QrData';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +29,21 @@ export class CoconutCounterService {
     return this.httpClient.post(`${this.baseUrl}/upload`, formData, {
       responseType: 'text',
     });
+  }
+
+  uploadQrTextJsonTesting(qrTextJson: string): Observable<QrData> {
+    const formData = new FormData();
+    formData.append('qrTextJson', qrTextJson);
+    return this.httpClient.post<QrData>(`${this.baseUrl}/upload-visualization`, formData);
+  }
+
+  getQrInfoByWeek(): Observable<Object> {
+    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
+  }
+  getQrInfoByMonth(): Observable<Object> {
+    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
+  }
+  getQrInfoByYear(): Observable<Object> {
+    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
   }
 }

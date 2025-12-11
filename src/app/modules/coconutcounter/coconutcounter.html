@@ -1,6 +1,8 @@
-<div class="h-full flex flex-col  bg-white">
+<div class="h-full flex flex-col bg-white">
   <!-- Header -->
   <header class="p-4 lg:pl-12">
+    <app-header></app-header>
+
     <h1 class="text-3xl font-bold text-gray-800 border-l-4 border-lime-300 pl-3 mb-4">
       QUẢN LÝ PHIẾU ĐẾM DỪA
     </h1>
@@ -24,31 +26,15 @@
             [placeholder]="isScanning() ? 'Đang chờ quét mã...' : 'Nhập hoặc quét mã QR tại đây...'"
             class="w-full placeholder-gray-400 placeholder-opacity-100 pl-4 pr-12 py-2.5 focus:outline-none border border-lime-200 rounded-lg focus:ring-2 focus:ring-lime-200 focus:border-lime-200 transition duration-150 shadow-sm text-sm"
           />
-          <!-- QR Scanner -->
+          <!-- QR Scanner với SVG Sprite -->
           <button
             class="absolute right-0 top-0 h-full px-3 cursor-pointer text-betrimex bg-lime-300 hover:bg-lime-400 rounded-r-lg transition duration-150 disabled:opacity-50"
             [disabled]="isScanning()"
             (click)="toggleScanning()"
             title="Quét QR Code"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6 shrink-0"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
-              />
+            <svg class="size-6 shrink-0">
+              <use href="assets/icons/sprite.svg#icon-qrcode"></use>
             </svg>
           </button>
         </div>
@@ -102,21 +88,9 @@
             class="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0 px-4 py-2 bg-lime-300 text-betrimex font-medium rounded-lg hover:bg-lime-400 transition duration-150 shrink-0 flex items-center gap-2 justify-center"
             (click)="applyFilter()"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-              />
+            <svg class="size-6">
+              <use href="assets/icons/sprite.svg#icon-filter"></use>
             </svg>
-
             Lọc
           </button>
           <button
@@ -185,13 +159,13 @@
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200 ">
+          <tbody class="bg-white divide-y divide-gray-200">
             @for (qr of qrData; track qr.id; let i = $index) {
             <tr class="hover:bg-lime-50 transition duration-100">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium text-gray-900">
                 {{ i + 1 + pageIndex * pageSize }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600  font-mono">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
                 {{ qr.qrScanner }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -254,50 +228,31 @@
               </select>
             </div>
 
+            <!-- First Page Button -->
             <button
               class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
               [disabled]="pageIndex === 0"
               (click)="goToFirstPage()"
               title="Trang đầu"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5"
-                />
+              <svg class="size-4">
+                <use href="assets/icons/sprite.svg#icon-chevron-double-left"></use>
               </svg>
             </button>
 
+            <!-- Previous Page Button -->
             <button
               class="size-8 rounded-lg border cursor-pointer border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
               [disabled]="pageIndex === 0"
               (click)="goToPreviousPage()"
               title="Trang trước"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 19.5 8.25 12l7.5-7.5"
-                />
+              <svg class="size-4">
+                <use href="assets/icons/sprite.svg#icon-chevron-left"></use>
               </svg>
             </button>
 
+            <!-- Page Numbers -->
             @for (page of getPageNumbers(); track page) {
             <button
               class="size-8 p-1 rounded-lg border transition text-xs cursor-pointer font-semibold flex items-center justify-center"
@@ -315,47 +270,27 @@
             </button>
             }
 
+            <!-- Next Page Button -->
             <button
               class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
               [disabled]="pageIndex === totalPages - 1"
               (click)="goToNextPage()"
               title="Trang sau"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
+              <svg class="size-4">
+                <use href="assets/icons/sprite.svg#icon-chevron-right"></use>
               </svg>
             </button>
 
+            <!-- Last Page Button -->
             <button
               class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
               [disabled]="pageIndex === totalPages - 1"
               (click)="goToLastPage()"
               title="Trang cuối"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"
-                />
+              <svg class="size-4">
+                <use href="assets/icons/sprite.svg#icon-chevron-double-right"></use>
               </svg>
             </button>
           </div>

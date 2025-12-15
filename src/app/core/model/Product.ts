@@ -1,3 +1,6 @@
+import { Pageable, Sort } from "./Common";
+import { QrData } from "./QrData";
+
 export class CreateProductRequest {
   company?: string | null;
   machineId?: string | null;
@@ -17,12 +20,12 @@ export class CreateProductRequest {
   qrData?: number;
 }
 
-export interface ProductResponse {
-  id?: number;
+export interface Product {
+  id?: string;
   count?: string;
   supplier?: string;
   quantity?: string;
-  coconutType?: string;
+  countType?: string;
   region?: string;
   startImgPath?: string;
   endImgPath?: string;
@@ -36,12 +39,32 @@ export interface ProductResponse {
   isFinished?: string;
   isSendToServer?: string;
   isSendToCloud?: string;
-  qrData?: string;
+  qrData?: QrData;
   createdAt?: string;
+}
+
+export interface ProductResponse {
+  content: Product[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
 }
 
 export class ProductInfoResponse {
   totalProduct: number = 0;
   labels: string[] = [];
   data: number[] = [];
+}
+
+export interface ProductSearchParams {
+  fromDate: string;
+  toDate: string;
+  isSync: boolean;
 }

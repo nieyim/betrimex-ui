@@ -1,13 +1,26 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../shared/components/header/header';
 import { Barchart } from './charts/barchart/barchart';
 import { CardLayout, DashboardStatsCardRespones } from '../../core/model/Dashboard';
 import { DashboardService } from '../../core/service/dashboard/dashboard.service';
+import { Linechart } from './charts/linechart/linechart';
+import { CoconutCounterService } from '../../core/service/coconutcounter/counter.service';
+import { PageEvent } from '@angular/material/paginator';
+import { QrDataResponse, QrData } from '../../core/model/QrData';
+import {
+  toDateTimeString,
+  getFirstDayOfMonth,
+  getLastDayOfMonth,
+} from '../../shared/utils/date.util';
+import { Piechart } from './charts/piechart/piechart';
+import { SearchParams } from '../../core/model/Common';
+import { Auditlog } from "./tables/auditlog/auditlog";
+import { RecentProduct } from "./tables/recentproduct/recentproduct";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, Header, Barchart],
+  imports: [CommonModule, Header, Barchart, Linechart, Piechart, Auditlog, RecentProduct],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -22,8 +35,12 @@ export class Dashboard implements OnInit {
 
   // Data mapped to UI cards
   stats: CardLayout[] = [];
+  qrData: QrData[] = [];
 
-  constructor(private dashboardService: DashboardService) {
+  constructor(
+    private dashboardService: DashboardService,
+    private qrDataService: CoconutCounterService
+  ) {
     // Auto update clock every second
     setInterval(() => (this.now = new Date()), 1000);
   }
@@ -45,6 +62,23 @@ export class Dashboard implements OnInit {
       error: (err) => {
         console.error('Dashboard API error:', err);
         this.isLoading.set(false);
+      },
+    });
+
+    const pageEvent: PageEvent = {
+      pageIndex: 0,
+      pageSize: 999,
+      length: 0,
+    };
+
+    const searchQr: SearchParams = {
+      fromDate: toDateTimeString(getFirstDayOfMonth()),
+      toDate: toDateTimeString(getLastDayOfMonth(), true),
+    };
+
+    this.qrDataService.getQr(pageEvent, searchQr).subscribe({
+      next: (response: QrDataResponse) => {
+        this.qrData = response.content;
       },
     });
   }
@@ -80,17 +114,16 @@ export class Dashboard implements OnInit {
         trend: 6,
       },
       {
-        label: 'Lỗi phát hiện',
+        label: 'Tổng user',
         value: this.dashboardStatCards.totalUser,
-        icon: 'assets/icons/sprite.svg#icon-exclamation',
+        icon: 'assets/icons/sprite.svg#icon-user',
         bgClass: 'bg-red-400',
         iconBg: 'bg-red-50',
-        iconColor: 'stroke-red-500',
+        iconColor: 'stroke-red-300',
         trend: null,
       },
     ];
   }
-
 
   /** Dummy line chart data (kept from your version) */
   get uptimeDots() {

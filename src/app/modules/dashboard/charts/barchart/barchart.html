@@ -1,11 +1,10 @@
-<div
-  class="w-full max-w-4xl mx-auto p-6 rounded-2xl"
->
-
+<div class="p-6">
   <!-- Header -->
   <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
     <div>
-      <h3 class="text-2xl font-bold text-gray-900 text-center md:text-left">Thống kê số lượng dừa</h3>
+      <h3 class="text-2xl font-bold text-gray-900 text-center md:text-left">
+        Thống kê số lượng dừa
+      </h3>
       <p class="text-sm text-gray-500 mt-1">
         Theo dõi số lượng dừa đã đếm theo từng mốc thời gian.
       </p>
@@ -13,7 +12,6 @@
 
     <!-- Mode Switch -->
     <div class="flex space-x-2 bg-gray-100 p-1 rounded-full shadow-inner">
-
       <!-- Week -->
       <button
         (click)="loadChartData('week')"
@@ -55,12 +53,12 @@
       >
         Năm
       </button>
-
     </div>
   </div>
-
-  <!-- Chart Section -->
-  <div class="h-100 rounded-xl bg-white  p-4">
-    <canvas id="barChart"></canvas>
+  <div class="w-full max-w-4xl mx-auto p-6 rounded-2xl">
+    <!-- Chart Section -->
+    <div class="h-100 rounded-xl bg-white p-4">
+      <canvas id="barChart"></canvas>
+    </div>
   </div>
 </div>

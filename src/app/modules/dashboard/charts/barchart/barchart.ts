@@ -36,7 +36,6 @@ export class Barchart implements OnInit {
 
     apiCall.subscribe((res: ProductInfoResponse) => {
       this.dataInfo = res; 
-      console.log(this.dataInfo)
       this.renderChart(res.labels, res.data);
     });
   }

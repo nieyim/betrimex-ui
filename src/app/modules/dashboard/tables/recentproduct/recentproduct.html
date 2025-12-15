@@ -1,0 +1,163 @@
+<div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+  <div
+    class="p-8 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-linear-to-r from-white to-slate-50"
+  >
+    <div>
+      <h3 class="text-2xl font-bold text-gray-900 text-center md:text-left">Lịch sử lô hàng</h3>
+      <p class="text-sm text-gray-500 mt-1 text-center md:text-left">Theo dỗi các lô gần đây</p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        class="px-5 py-2.5 cursor-pointer bg-lime-400 border border-slate-200 text-white rounded-xl text-sm font-bold hover:border-lime-400 hover:bg-lime-500 transition-colors shadow-sm"
+      >
+        Xuất Excel
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm text-slate-600">
+      <thead class="bg-slate-50/50 text-xs uppercase font-bold text-slate-400 tracking-wider">
+        <tr>
+          <th class="px-6 py-5 w-16">STT</th>
+          <th class="px-6 py-5">Mã Lô (Lot Number)</th>
+          <th class="px-6 py-5 text-center">Biển số xe</th>
+          <th class="px-6 py-5 text-center">Số lượng</th>
+          <th class="px-6 py-5">Loại đếm</th>
+          <th class="px-6 py-5">Đồng bộ</th>
+          <th class="px-6 py-5">Giờ tạo</th>
+          <th class="px-6 py-5 text-center">Chức năng</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        @for (product of productData; track product.id; let i = $index) {
+        <tr class="hover:bg-lime-50/30 transition-colors group">
+          <!-- 1. STT -->
+          <td class="px-6 py-5 font-bold text-slate-400">{{ i + 1 }}</td>
+
+          <!-- 2. Mã Lô -->
+          <td class="px-6 py-5 font-bold text-slate-700">{{ product.lotNumber }}</td>
+
+          <!-- 3. Biển số xe -->
+          <td class="px-6 text-center py-5">
+            <span
+              class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-slate-600 border border-gray-200 font-semibold"
+              >{{ product.vehiclePlate }}</span
+            >
+          </td>
+
+          <!-- 4. Số lượng -->
+          <td class="p-6 py-5 text-center font-mono font-bold text-slate-700 text-base">
+            {{ product.quantity | number }}
+          </td>
+
+          <!-- 5. Loại đếm -->
+          <td class="px-6 py-5">
+            <span
+              class="text-xs font-bold border px-2 py-1 rounded-md bg-white text-slate-500"
+              [class.border-lime-200]="product.countType"
+            >
+              {{ product.countType == 'AI_COUNT' ? 'Tự động' : 'Thủ công' }}
+            </span>
+          </td>
+
+          <!-- 6. Đồng bộ (0/1) -->
+          <td class="px-6 py-5">
+            @if (product.isSendToCloud == "1") {
+            <span
+              class="text-lime-600 bg-lime-50 px-2 py-1 rounded-md text-xs font-bold flex w-fit items-center gap-1"
+              ><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              Đã xong</span
+            >
+            } @else {
+            <span
+              class="text-slate-400 bg-slate-100 px-2 py-1 rounded-md text-xs font-bold flex w-fit items-center gap-1"
+              >Chờ...</span
+            >
+            }
+          </td>
+
+          <!-- 7. Giờ tạo -->
+          <td class="px-6 py-5">
+            <div class="flex flex-col text-xs">
+              <!-- Ngày -->
+              <span class="font-semibold text-slate-700 font-mono text-sm">
+                {{ product.createdAt | date : 'dd/MM/yyyy' }}
+              </span>
+
+              <!-- Giờ -->
+              <span class="text-slate-40 font-mono">
+                {{ product.createdAt | date : 'HH:mm:ss' }}
+              </span>
+            </div>
+          </td>
+          <!-- 8. Chức năng -->
+          <td class="px-6 py-5">
+            <div class="flex items-center justify-center gap-3">
+              <!-- Nút Xem chi tiết -->
+              <button
+                class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+                title="Xem chi tiết"
+                (click)="product.id && openDialog(product.id)"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+             -1.274 4.057-5.064 7-9.542 7
+             -4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                <span>Xem</span>
+              </button>
+
+              <!-- Nút Xuất PDF -->
+              <button
+                class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
+                title="Xuất PDF"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-4 h-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                  />
+                </svg>
+
+                <span>PDF</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-center">
+    <button class="text-sm text-lime-600 font-bold hover:text-lime-700 transition-colors">
+      Xem tất cả Lô hàng &rarr;
+    </button>
+  </div>
+</div>

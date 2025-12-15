@@ -1,3 +1,5 @@
+import { Pageable, Sort } from "./Common";
+
 export interface QrData {
     id: number;
     vehicleCard: string;
@@ -39,22 +41,3 @@ export interface QrDataResponse {
   empty: boolean;
 }
 
-export interface QrDataSearchParams {
-    fromDate: string;
-    toDate: string;
-}
-
-export interface Sort {
-  empty: boolean;
-  sorted: boolean;
-  unsorted: boolean;
-}
-
-export interface Pageable {
-  pageNumber: number;
-  pageSize: number;
-  offset: number;
-  paged: boolean;
-  unpaged: boolean;
-  sort: Sort;
-}

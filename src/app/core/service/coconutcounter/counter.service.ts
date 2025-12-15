@@ -2,7 +2,8 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
-import { QrData, QrDataResponse, QrDataSearchParams } from '../../model/QrData';
+import { QrData, QrDataResponse } from '../../model/QrData';
+import { SearchParams } from '../../model/Common';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class CoconutCounterService {
   constructor(private httpClient: HttpClient) {}
   private readonly baseUrl = 'http://localhost:8080/api/v1/qr';
 
-  getQr(pageEvent: PageEvent, searchParams: QrDataSearchParams): Observable<QrDataResponse> {
+  getQr(pageEvent: PageEvent, searchParams: SearchParams): Observable<QrDataResponse> {
     let params = new HttpParams()
       .set('page', pageEvent.pageIndex.toString())
       .set('size', pageEvent.pageSize.toString());
@@ -37,13 +38,4 @@ export class CoconutCounterService {
     return this.httpClient.post<QrData>(`${this.baseUrl}/upload-visualization`, formData);
   }
 
-  getQrInfoByWeek(): Observable<Object> {
-    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
-  }
-  getQrInfoByMonth(): Observable<Object> {
-    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
-  }
-  getQrInfoByYear(): Observable<Object> {
-    return this.httpClient.get<Object>(`${this.baseUrl}/upload-visualization`);
-  }
 }

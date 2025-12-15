@@ -7,8 +7,9 @@ import {
   toDateTimeString,
 } from '../../shared/utils/date.util';
 import { PageEvent } from '@angular/material/paginator';
-import { QrData, QrDataResponse, QrDataSearchParams } from '../../core/model/QrData';
+import { QrData, QrDataResponse } from '../../core/model/QrData';
 import { Header } from '../../shared/components/header/header';
+import { SearchParams } from '../../core/model/Common';
 
 @Component({
   selector: 'app-coconutcounter',
@@ -58,13 +59,10 @@ export class CoconutCounter {
       length: this.totalItems,
     };
 
-    const searchQr: QrDataSearchParams = {
+    const searchQr: SearchParams = {
       fromDate: toDateTimeString(this.fromDate),
       toDate: toDateTimeString(this.toDate, true),
     };
-
-    console.log('Loading QR data with params:', pageEvent, searchQr);
-
     this.coconutCounterService.getQr(pageEvent, searchQr).subscribe({
       next: (response: QrDataResponse) => {
         this.qrData = response.content;

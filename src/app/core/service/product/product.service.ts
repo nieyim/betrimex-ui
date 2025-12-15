@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateProductRequest, ProductResponse, ProductInfoResponse } from '../../model/Product';
+import { CreateProductRequest, ProductResponse, ProductInfoResponse, ProductSearchParams, Product } from '../../model/Product';
 import { Observable } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 @Injectable({
   providedIn: 'root',
@@ -10,16 +11,26 @@ export class ProductService {
   constructor(private httpClient: HttpClient) {}
   private readonly baseUrl = 'http://localhost:8080/api/v1/products';
 
+  searchProduct(pageEvent: PageEvent, searchParams: ProductSearchParams): Observable<ProductResponse> {
+    let params = new HttpParams()
+      .set('page', pageEvent.pageIndex.toString())
+      .set('size', pageEvent.pageSize.toString());
+
+    return this.httpClient.post<ProductResponse>(`${this.baseUrl}/search-params`, searchParams, {
+      params: params,
+    });
+  }
+
   createProduct(product: CreateProductRequest): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}`, product);
   }
 
-  getProductById(id: string): Observable<ProductResponse> {
-    return this.httpClient.get<ProductResponse>(`${this.baseUrl}/${id}`);
+  getProductById(id: string): Observable<Product> {
+    return this.httpClient.get<Product>(`${this.baseUrl}/${id}`);
   }
 
-  getProductByLotId(id: string): Observable<ProductResponse> {
-    return this.httpClient.get<ProductResponse>(`${this.baseUrl}/lots/${id}`);
+  getProductByLotId(id: string): Observable<Product> {
+    return this.httpClient.get<Product>(`${this.baseUrl}/lots/${id}`);
   }
 
   getProductInfoByWeek(): Observable<ProductInfoResponse> {

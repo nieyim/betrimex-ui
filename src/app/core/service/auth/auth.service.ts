@@ -33,8 +33,6 @@ export class AuthService {
 
       // Get username from token
       this.currentUsername.set(payload?.sub || null);
-
-      console.log('Session restored. Username:', payload?.sub);
     } else {
       this.logout();
     }
@@ -57,17 +55,10 @@ export class AuthService {
           this.currentUserId.set(res.id || null);
 
           this.loading.set(false);
-
-          console.log('Login success:', {
-            username: payload?.sub,
-            userId: res.id,
-            tokenExpiry: new Date((payload?.exp || 0) * 1000),
-          });
         },
         error: (err) => {
           this.loading.set(false);
           this.loginError.set('Sai tên tài khoản hoặc mật khẩu! Xin vui lòng thử lại.');
-          console.error('Login error:', err);
         },
       })
     );
@@ -78,7 +69,6 @@ export class AuthService {
     localStorage.removeItem(this.refreshTokenKey);
     this.currentUsername.set(null);
     this.currentUserId.set(null);
-    console.log('Logged out');
   }
 
   setTokens(accessToken: string, refreshToken: string): void {

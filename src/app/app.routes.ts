@@ -5,6 +5,7 @@ import { AuthGuard } from './core/guard/auth.guard';
 import { Layout } from './modules/layout/layout';
 import { CoconutCounter } from './modules/coconutcounter/coconutcounter';
 import { CoconutAI } from './modules/coconutai/coconutai';
+import { ProductPage } from './modules/product/product';
 
 export const routes: Routes = [
   { path: '', component: Login },
@@ -17,6 +18,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: Dashboard },
       { path: 'coconutcounter', component: CoconutCounter },
       { path: 'coconutai', component: CoconutAI },
+      { path: 'product', component: ProductPage}
     ],
   },
 

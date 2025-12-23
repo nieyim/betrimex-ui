@@ -1,0 +1,310 @@
+<div class="h-full min-h-screen flex flex-col bg-white">
+  <div class="min-h-screen bg-white font-sans text-slate-800 p-4 lg:pl-12">
+    <!-- Header -->
+    <app-header></app-header>
+
+    <main class="flex-1">
+      <div class="bg-white rounded-xl shadow-xl h-full overflow-hidden flex flex-col">
+        <!-- Filter Area -->
+        <div class="p-4 border-b border-gray-200">
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Danh Sách Lô Đã Đếm</h3>
+          <div class="flex flex-col sm:flex-row gap-3 items-end">
+            <div class="w-full sm:w-auto">
+              <label for="date-from" class="block text-xs font-medium text-gray-500 mb-1"
+                >Từ Ngày</label
+              >
+              <input
+                #dateFromRef
+                id="date-from"
+                type="date"
+                [value]="fromDate"
+                class="w-36 border border-gray-300 rounded-lg h-10 px-3 text-sm focus:ring-2 focus:ring-lime-500 outline-none"
+              />
+            </div>
+
+            <div class="w-full sm:w-auto">
+              <label for="date-to" class="block text-xs font-medium text-gray-500 mb-1"
+                >Đến Ngày</label
+              >
+              <input
+                #dateToRef
+                id="date-to"
+                type="date"
+                [value]="toDate"
+                class="w-36 border border-gray-300 rounded-lg h-10 px-3 text-sm focus:ring-2 focus:ring-lime-500 outline-none"
+              />
+            </div>
+
+            <button
+              class="cursor-pointer w-full sm:w-auto min-w-[110px] h-10 px-4 bg-lime-300 text-betrimex font-semibold rounded-lg hover:bg-lime-400 transition-all duration-150 flex items-center gap-2 justify-center"
+              (click)="applyFilter()"
+            >
+              <svg class="size-5">
+                <use href="assets/icons/sprite.svg#icon-filter"></use>
+              </svg>
+              Lọc
+            </button>
+
+            <button
+              class="cursor-pointer w-full sm:w-auto min-w-[110px] h-10 px-4 bg-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-150 flex items-center justify-center"
+              (click)="resetFilter()"
+            >
+              Xóa Lọc
+            </button>
+
+            <button
+              class="cursor-pointer w-full sm:ml-auto sm:w-auto min-w-[130px] h-10 px-4 bg-lime-400 text-white font-semibold rounded-lg hover:bg-lime-500 transition-all duration-150 flex items-center gap-2 justify-center shadow-sm"
+              (click)="handleExportExcel()"
+            >
+              <svg class="size-5">
+                <use href="assets/icons/sprite.svg#icon-download"></use>
+              </svg>
+              Xuất Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="flex-1 overflow-y-auto overflow-x-auto">
+          <table class="w-full table-auto divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  STT
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Mã Lô (Lot Number)
+                </th>
+                <th
+                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Biển số xe
+                </th>
+                <th
+                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Số lượng
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Loại đếm
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Đồng bộ
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Giờ tạo
+                </th>
+                <th
+                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Chức năng
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              @for (product of productData; track product.id; let i = $index) {
+              <tr class="hover:bg-lime-50/30 transition-colors group">
+                <!-- 1. STT -->
+                <td class="px-6 py-5 font-bold text-slate-400">{{ i + 1 }}</td>
+
+                <!-- 2. Mã Lô -->
+                <td class="px-6 py-5 font-bold text-slate-700">{{ product.lotNumber }}</td>
+
+                <!-- 3. Biển số xe -->
+                <td class="px-6 text-center py-5">
+                  <span
+                    class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-slate-600 border border-gray-200 font-semibold"
+                    >{{ product.vehiclePlate }}</span
+                  >
+                </td>
+
+                <!-- 4. Số lượng -->
+                <td class="p-6 py-5 text-center font-mono font-bold text-slate-700 text-base">
+                  {{ product.quantity | number }}
+                </td>
+
+                <!-- 5. Loại đếm -->
+                <td class="px-6 py-5">
+                  <span
+                    class="text-xs font-bold border px-2 py-1 rounded-md bg-white text-slate-500"
+                    [class.border-lime-200]="product.countType"
+                  >
+                    {{ product.countType == 'AI_COUNT' ? 'Tự động' : 'Thủ công' }}
+                  </span>
+                </td>
+
+                <!-- 6. Đồng bộ (0/1) -->
+                <td class="px-6 py-5">
+                  @if (product.isSendToCloud == "1") {
+                  <span
+                    class="text-lime-600 bg-lime-50 px-2 py-1 rounded-md text-xs font-bold flex w-fit items-center gap-1"
+                    ><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Đã xong</span
+                  >
+                  } @else {
+                  <span
+                    class="text-slate-400 bg-slate-100 px-2 py-1 rounded-md text-xs font-bold flex w-fit items-center gap-1"
+                    >Chờ...</span
+                  >
+                  }
+                </td>
+
+                <!-- 7. Giờ tạo -->
+                <td class="px-6 py-5">
+                  <div class="flex flex-col text-xs">
+                    <!-- Ngày -->
+                    <span class="font-semibold text-slate-700 font-mono text-sm">
+                      {{ product.createdAt | date : 'dd/MM/yyyy' }}
+                    </span>
+
+                    <!-- Giờ -->
+                    <span class="text-slate-40 font-mono">
+                      {{ product.createdAt | date : 'HH:mm:ss' }}
+                    </span>
+                  </div>
+                </td>
+                <!-- 8. Chức năng -->
+                <td class="px-6 py-5">
+                  <div class="flex items-center justify-center gap-3">
+                    <!-- Nút Xem chi tiết -->
+                    <button
+                      class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+                      title="Xem chi tiết"
+                      (click)="product.id && openDialog(product.id)"
+                    >
+                      <svg class="h-4 w-4" stroke="currentColor">
+                        <use href="assets/icons/sprite.svg#icon-eye"></use>
+                      </svg>
+                      <span>Xem</span>
+                    </button>
+
+                    <!-- Nút Xuất PDF -->
+                    <button
+                      class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
+                      title="Xuất PDF"
+                      (click)="product.id && handleExportPDF(product.id, i)"
+                    >
+                      <svg class="w-4 h-4">
+                        <use href="assets/icons/sprite.svg#doc-download"></use>
+                      </svg>
+                      <span>PDF</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-4 border-t border-gray-200 bg-white">
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="text-sm text-gray-600">
+              Hiển thị <span class="font-semibold text-gray-900">{{ startItem }}</span> -
+              <span class="font-semibold text-gray-900">{{ endItem }}</span> của
+              <span class="font-semibold text-gray-900">{{ totalItems }}</span> kết quả
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 mr-4">
+                <select
+                  class="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white"
+                  [value]="pageSize"
+                  (change)="onPageSizeChange($event)"
+                >
+                  @for (size of pageSizeOptions; track size) {
+                  <option [value]="size" [selected]="size === pageSize">{{ size }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- First Page Button -->
+              <button
+                class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+                [disabled]="pageIndex === 0"
+                (click)="goToFirstPage()"
+                title="Trang đầu"
+              >
+                <svg class="size-4">
+                  <use href="assets/icons/sprite.svg#icon-chevron-double-left"></use>
+                </svg>
+              </button>
+
+              <!-- Previous Page Button -->
+              <button
+                class="size-8 rounded-lg border cursor-pointer border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+                [disabled]="pageIndex === 0"
+                (click)="goToPreviousPage()"
+                title="Trang trước"
+              >
+                <svg class="size-4">
+                  <use href="assets/icons/sprite.svg#icon-chevron-left"></use>
+                </svg>
+              </button>
+
+              <!-- Page Numbers -->
+              @for (page of getPageNumbers(); track page) {
+              <button
+                class="size-8 p-1 rounded-lg border transition text-xs cursor-pointer font-semibold flex items-center justify-center"
+                [class.bg-lime-300]="page === pageIndex"
+                [class.text-betrimex]="page === pageIndex"
+                [class.border-lime-300]="page === pageIndex"
+                [class.shadow-sm]="page === pageIndex"
+                [class.border-gray-300]="page !== pageIndex"
+                [class.text-gray-700]="page !== pageIndex"
+                [class.hover:bg-lime-50]="page !== pageIndex"
+                [class.hover:border-lime-300]="page !== pageIndex"
+                (click)="onPageChange(page)"
+              >
+                {{ page + 1 }}
+              </button>
+              }
+
+              <!-- Next Page Button -->
+              <button
+                class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+                [disabled]="pageIndex === totalPages - 1"
+                (click)="goToNextPage()"
+                title="Trang sau"
+              >
+                <svg class="size-4">
+                  <use href="assets/icons/sprite.svg#icon-chevron-right"></use>
+                </svg>
+              </button>
+
+              <!-- Last Page Button -->
+              <button
+                class="size-8 cursor-pointer rounded-lg border border-gray-300 hover:bg-lime-50 hover:border-lime-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition text-sm font-medium text-gray-700 flex items-center justify-center"
+                [disabled]="pageIndex === totalPages - 1"
+                (click)="goToLastPage()"
+                title="Trang cuối"
+              >
+                <svg class="size-4">
+                  <use href="assets/icons/sprite.svg#icon-chevron-double-right"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

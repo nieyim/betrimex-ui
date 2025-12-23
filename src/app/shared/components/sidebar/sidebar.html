@@ -83,6 +83,26 @@
       </div>
     </a>
 
+    <a [routerLink]="'/product'" class="block px-3">
+      <div
+        class="flex items-center p-2 rounded-lg text-gray-600 hover:bg-lime-300 hover:text-betrimex"
+        routerLinkActive="bg-lime-300 text-betrimex"
+        [ngClass]="{
+          'justify-center': isCollapsed(),
+          'gap-2': !isCollapsed()
+        }"
+      >
+        <svg class="size-6">
+          <use href="assets/icons/sprite.svg#icon-clipboard"></use>
+        </svg>
+
+        @if (!isCollapsed()) {
+        <span class="font-semibold whitespace-nowrap">Thống kê lô đếm</span>
+        }
+      </div>
+    </a>
+
+
     <!-- Settings Link -->
     <a [routerLink]="'/settings'" class="block px-3">
       <div

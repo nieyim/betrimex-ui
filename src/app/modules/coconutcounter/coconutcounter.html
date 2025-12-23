@@ -85,16 +85,17 @@
             />
           </div>
           <button
-            class="cursor-pointer w-full sm:w-auto mt-4 sm:mt-0 px-4 py-2 bg-lime-300 text-betrimex font-medium rounded-lg hover:bg-lime-400 transition duration-150 shrink-0 flex items-center gap-2 justify-center"
+            class="cursor-pointer w-full sm:w-auto min-w-[110px] h-10 px-4 bg-lime-300 text-betrimex font-semibold rounded-lg hover:bg-lime-400 transition-all duration-150 flex items-center gap-2 justify-center"
             (click)="applyFilter()"
           >
-            <svg class="size-6">
+            <svg class="size-5">
               <use href="assets/icons/sprite.svg#icon-filter"></use>
             </svg>
             Lọc
           </button>
+
           <button
-            class="cursor-pointer w-full sm:w-auto mt-0 px-4 py-2 bg-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-300 transition duration-150 shrink-0"
+            class="cursor-pointer w-full sm:w-auto min-w-[110px] h-10 px-4 bg-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-150 flex items-center justify-center"
             (click)="clearFilter()"
           >
             Xóa Lọc

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { CreateProductRequest, ProductResponse, ProductInfoResponse, ProductSearchParams, Product } from '../../model/Product';
 import { Observable } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { SearchParams } from '../../model/Common';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,18 @@ export class ProductService {
 
     return this.httpClient.post<ProductResponse>(`${this.baseUrl}/search-params`, searchParams, {
       params: params,
+    });
+  }
+
+  exportExcelReport(searchParams: SearchParams): Observable<Blob> {
+     return this.httpClient.post(`${this.baseUrl}/printExcel`, searchParams, {
+      responseType: 'blob'
+    });
+  }
+
+  exportPDFReport(id: string): Observable<Blob> {
+    return this.httpClient.get(`${this.baseUrl}/printPDF/${id}`, {
+      responseType: 'blob'
     });
   }
 

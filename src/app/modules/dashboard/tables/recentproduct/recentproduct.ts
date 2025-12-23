@@ -23,6 +23,8 @@ export class RecentProduct implements OnInit {
   productData: Product[] = [];
   fromDate: string = getFirstDayOfMonth();
   toDate: string = getLastDayOfMonth();
+  isDownloading = false;
+  sendingIds: Set<number> = new Set();
 
   ngOnInit(): void {
     this.loadProduct();
@@ -54,11 +56,51 @@ export class RecentProduct implements OnInit {
 
   readonly dialog = inject(MatDialog);
 
+  handleExportPDF(productId: string, id: number): void {
+    if (this.sendingIds.has(id)) {
+      return;
+    }
+
+    this.sendingIds.add(id);
+    this.isDownloading = true;
+
+    this.productService.exportPDFReport(productId).subscribe({
+      next: (response: Blob) => {
+        if (!response || response.size === 0) {
+          console.error('PDF rỗng hoặc lỗi dữ liệu');
+          return;
+        }
+
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Báo cáo lô dừa.pdf`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Export PDF thất bại:', err);
+      },
+      complete: () => {
+        this.sendingIds.delete(id);
+        this.isDownloading = false;
+      },
+    });
+  }
+
+  handleExportExcel () {
+    
+  }
+
   openDialog(id: string) {
     const dialogRef = this.dialog.open(ProductDialog, {
       data: {
         productId: id,
       },
+      disableClose: false,
     });
   }
 }
